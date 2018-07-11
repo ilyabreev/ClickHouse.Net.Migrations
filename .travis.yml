@@ -1,0 +1,17 @@
+language: csharp
+mono: none
+dotnet: 2.0.0
+
+install:
+  - dotnet restore
+
+script:
+  - dotnet build -c Release ./ClickHouse.Net.Migrations.sln
+  - dotnet test test/ClickHouse.Net.Migrations.Tests/ClickHouse.Net.Migrations.Tests.csproj
+
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: chmod +x ./deploy-nuget.sh && ./deploy-nuget.sh $NUGET_API_KEY $NUGET_SOURCE
+  on:
+    tags: true
