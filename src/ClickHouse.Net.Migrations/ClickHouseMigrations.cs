@@ -111,7 +111,7 @@ namespace ClickHouse.Net.Migrations
 
         private IOrderedEnumerable<Migration> GetMigrationsFromAssembly()
         {
-            return Assembly.GetExecutingAssembly()
+            return Assembly.GetCallingAssembly()
                 .GetTypes()
                 .Where(t => typeof(Migration).IsAssignableFrom(t) && !t.IsAbstract)
                 .Select(t => (Migration) Activator.CreateInstance(t))
