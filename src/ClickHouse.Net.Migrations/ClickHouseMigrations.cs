@@ -16,8 +16,13 @@ namespace ClickHouse.Net.Migrations
         private readonly IClickHouseDatabase _dbProvider;
         private readonly ILogger<ClickHouseMigrations> _logger;
         private readonly ClickHouseConnectionSettings _connectionSettings;
+        private readonly IClickHouseMigrationLocator _locator;
 
-        public ClickHouseMigrations(IClickHouseDatabase dbProvider, ILogger<ClickHouseMigrations> logger, ClickHouseConnectionSettings connectionSettings)
+        public ClickHouseMigrations(
+            IClickHouseDatabase dbProvider, 
+            ILogger<ClickHouseMigrations> logger, 
+            ClickHouseConnectionSettings connectionSettings,
+            IClickHouseMigrationLocator locator)
         {
             _dbProvider = dbProvider;
             _logger = logger;
@@ -28,6 +33,7 @@ namespace ClickHouse.Net.Migrations
             }
 
             _connectionSettings = connectionSettings;
+            _locator = locator;
         }
 
         public void ApplyMigrations(bool createDatabaseIfNotExists)
@@ -43,7 +49,7 @@ namespace ClickHouse.Net.Migrations
                 CreateMigrationTableIfNotExists();
             }
             
-            var migrations = GetMigrationsFromAssembly();
+            var migrations = _locator.Locate();
             var notAppliedMigrations = GetNotAppliedMigration(migrations.ToList(), AllAppliedMigrations());
             var success = ApplyMigrations(notAppliedMigrations);
             if (success)
@@ -107,15 +113,6 @@ namespace ClickHouse.Net.Migrations
             }
 
             return true;
-        }
-
-        private IOrderedEnumerable<Migration> GetMigrationsFromAssembly()
-        {
-            return Assembly.GetCallingAssembly()
-                .GetTypes()
-                .Where(t => typeof(Migration).IsAssignableFrom(t) && !t.IsAbstract)
-                .Select(t => (Migration) Activator.CreateInstance(t))
-                .OrderBy(m => m.CreatedAt);
         }
 
         private bool MigrationTableExists()

@@ -7,6 +7,7 @@ namespace ClickHouse.Net.Migrations
         public static IServiceCollection AddClickHouseMigrations(this IServiceCollection services)
         {
             services.AddTransient<IClickHouseMigrations, ClickHouseMigrations>();
+            services.AddTransient<IClickHouseMigrationLocator, DefaultClickHouseMigrationLocator>();
             return services;
         }
     }
