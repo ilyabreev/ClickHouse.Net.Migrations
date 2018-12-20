@@ -9,12 +9,6 @@ namespace ClickHouse.Net.Migrations
     public interface IClickHouseMigrationLocator
     {
         /// <summary>
-        /// Locate migrations in `default` location. For <see cref="DefaultClickHouseMigrationLocator"/> it is Assembly.GetEntryAssembly()
-        /// </summary>
-        /// <returns></returns>
-        IOrderedEnumerable<Migration> Locate();
-
-        /// <summary>
         /// Locate migrations in specified assembly
         /// </summary>
         /// <param name="assembly"></param>

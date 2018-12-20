@@ -38,6 +38,11 @@ namespace ClickHouse.Net.Migrations
 
         public void ApplyMigrations(bool createDatabaseIfNotExists)
         {
+            ApplyMigrations(Assembly.GetEntryAssembly(), createDatabaseIfNotExists);
+        }
+
+        public void ApplyMigrations(Assembly assembly, bool createDatabaseIfNotExists)
+        {
             if (createDatabaseIfNotExists)
             {
                 CreateDatabaseIfNotExists();
@@ -49,7 +54,7 @@ namespace ClickHouse.Net.Migrations
                 CreateMigrationTableIfNotExists();
             }
             
-            var migrations = _locator.Locate();
+            var migrations = _locator.Locate(assembly);
             var notAppliedMigrations = GetNotAppliedMigration(migrations.ToList(), AllAppliedMigrations());
             var success = ApplyMigrations(notAppliedMigrations);
             if (success)

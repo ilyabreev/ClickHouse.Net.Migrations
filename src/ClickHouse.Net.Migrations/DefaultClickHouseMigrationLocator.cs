@@ -6,11 +6,6 @@ namespace ClickHouse.Net.Migrations
 {
     public class DefaultClickHouseMigrationLocator : IClickHouseMigrationLocator
     {
-        public IOrderedEnumerable<Migration> Locate()
-        {
-            return Locate(Assembly.GetEntryAssembly());
-        }
-
         public IOrderedEnumerable<Migration> Locate(Assembly assembly)
         {
             if (assembly == null)
